@@ -42,11 +42,13 @@ class DownloadManager:
         self.process = None
         self.is_running = False
         self.waiting_for_code = False
+        self.code_requested = False  # Flag to prevent multiple requests
         
     def start_download(self, course_url, download_srt, tab_count):
         """Start the download process"""
         self.is_running = True
         self.waiting_for_code = False
+        self.code_requested = False  # Reset flag
         
         # Run Node.js script with parameters
         thread = threading.Thread(
@@ -105,8 +107,9 @@ class DownloadManager:
                         if line:
                             socketio.emit('download_log', {'message': line})
                             
-                            # Check if waiting for verification code
-                            if 'verification code' in line.lower() and 'enter' in line.lower():
+                            # Check if waiting for verification code (only once)
+                            if not self.code_requested and 'verification code' in line.lower() and 'enter' in line.lower():
+                                self.code_requested = True  # Mark as requested
                                 self.waiting_for_code = True
                                 socketio.emit('request_verification_code')
                                 

@@ -768,6 +768,7 @@
     <script>
         const socket = io();
         let selectedFile = null;
+        let verificationModalShown = false;  // Flag to prevent multiple modals
 
         // Socket event listeners
         socket.on('connect', () => {
@@ -779,7 +780,12 @@
         });
 
         socket.on('request_verification_code', () => {
-            document.getElementById('verification-modal').classList.add('active');
+            if (!verificationModalShown) {
+                verificationModalShown = true;
+                document.getElementById('verification-modal').classList.add('active');
+                document.getElementById('verification-code').value = '';
+                document.getElementById('verification-code').focus();
+            }
         });
 
         socket.on('download_complete', (data) => {
@@ -848,6 +854,9 @@
                 alert('Por favor, insira a URL do curso');
                 return;
             }
+
+            // Reset verification modal flag
+            verificationModalShown = false;
 
             document.getElementById('log-card').style.display = 'block';
             document.getElementById('log-container').innerHTML = '';
