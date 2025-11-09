@@ -55,6 +55,20 @@ class DownloadManager:
         )
         thread.daemon = True
         thread.start()
+    
+    def stop_download(self):
+        """Stop the download process"""
+        if self.process:
+            try:
+                self.process.terminate()
+                self.process.wait(timeout=5)
+            except:
+                self.process.kill()
+            finally:
+                self.process = None
+                self.is_running = False
+                socketio.emit('download_log', {'message': '⚠️ Download interrompido pelo usuário'})
+                socketio.emit('download_complete', {'success': False, 'error': 'Cancelled by user'})
         
     def _run_download(self, course_url, download_srt, tab_count):
         """Internal method to run the download process"""
@@ -73,6 +87,7 @@ class DownloadManager:
             # Start the process
             self.process = subprocess.Popen(
                 cmd,
+                stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
@@ -156,6 +171,16 @@ def submit_verification_code():
     verification_code_event.set()
     
     return jsonify({'success': True})
+
+@app.route('/api/stop-download', methods=['POST'])
+def stop_download():
+    """Stop the download process"""
+    if not download_manager.is_running:
+        return jsonify({'error': 'No download in progress'}), 400
+    
+    download_manager.stop_download()
+    
+    return jsonify({'success': True, 'message': 'Download stopped'})
 
 @app.route('/api/combined-files', methods=['GET'])
 def get_combined_files():
@@ -394,4 +419,4 @@ if __name__ == '__main__':
     print(f'Combined transcripts directory: {COMBINED_DIR}')
     print(f'Summaries directory: {SUMMARIES_DIR}')
     print('\nOpen your browser at: http://localhost:5000')
-    socketio.run(app, debug=True, host='0.0.0.0', port=5000)
+    socketio.run(app, debug=True, host='0.0.0.0', port=5000, use_reloader=False)

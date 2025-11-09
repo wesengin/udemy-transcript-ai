@@ -241,10 +241,69 @@
             box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
         }
 
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(239, 68, 68, 0.4);
+        }
+
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none !important;
+        }
+
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip-icon {
+            color: var(--text-secondary);
+            margin-left: 0.5rem;
+            cursor: help;
+            font-size: 0.9rem;
+        }
+
+        .tooltip-text {
+            visibility: hidden;
+            width: 300px;
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            text-align: left;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -150px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--card-bg) transparent transparent transparent;
+        }
+
+        .tooltip-container:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
         }
 
         .log-container {
@@ -548,13 +607,30 @@
                         <div class="checkbox-group">
                             <input type="checkbox" id="download-srt">
                             <label for="download-srt" style="margin: 0;">Baixar arquivos .srt também</label>
+                            <div class="tooltip-container">
+                                <i class="fas fa-info-circle tooltip-icon"></i>
+                                <span class="tooltip-text">
+                                    <strong>Arquivos .srt (SubRip Subtitle)</strong><br>
+                                    São arquivos de legenda com timestamps precisos. Útil para:<br>
+                                    • Criar legendas personalizadas<br>
+                                    • Sincronizar com vídeos offline<br>
+                                    • Análise de conteúdo por tempo<br>
+                                    • Importar em editores de vídeo<br><br>
+                                    <em>Se desmarcado, apenas o texto puro será baixado.</em>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <button class="btn btn-primary" onclick="startDownload()" id="start-download-btn">
-                    <i class="fas fa-play"></i> Iniciar Download
-                </button>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn btn-primary" onclick="startDownload()" id="start-download-btn">
+                        <i class="fas fa-play"></i> Iniciar Download
+                    </button>
+                    <button class="btn btn-danger" onclick="stopDownload()" id="stop-download-btn" style="display: none;">
+                        <i class="fas fa-stop"></i> Parar Download
+                    </button>
+                </div>
             </div>
 
             <div class="card" id="log-card" style="display: none;">
@@ -696,11 +772,14 @@
         socket.on('download_complete', (data) => {
             if (data.success) {
                 addLog('✅ Download concluído com sucesso!', 'success');
-                document.getElementById('start-download-btn').disabled = false;
             } else {
                 addLog('❌ Erro: ' + data.error, 'error');
-                document.getElementById('start-download-btn').disabled = false;
             }
+            
+            // Restore buttons
+            document.getElementById('start-download-btn').disabled = false;
+            document.getElementById('start-download-btn').style.display = 'inline-flex';
+            document.getElementById('stop-download-btn').style.display = 'none';
         });
 
         socket.on('summarization_progress', (data) => {
@@ -760,6 +839,8 @@
             document.getElementById('log-card').style.display = 'block';
             document.getElementById('log-container').innerHTML = '';
             document.getElementById('start-download-btn').disabled = true;
+            document.getElementById('start-download-btn').style.display = 'none';
+            document.getElementById('stop-download-btn').style.display = 'inline-flex';
 
             addLog('🚀 Iniciando download...', 'success');
 
@@ -781,10 +862,40 @@
                 if (!response.ok) {
                     addLog('❌ Erro: ' + data.error, 'error');
                     document.getElementById('start-download-btn').disabled = false;
+                    document.getElementById('start-download-btn').style.display = 'inline-flex';
+                    document.getElementById('stop-download-btn').style.display = 'none';
                 }
             } catch (error) {
                 addLog('❌ Erro: ' + error.message, 'error');
                 document.getElementById('start-download-btn').disabled = false;
+                document.getElementById('start-download-btn').style.display = 'inline-flex';
+                document.getElementById('stop-download-btn').style.display = 'none';
+            }
+        }
+
+        // Stop download
+        async function stopDownload() {
+            if (!confirm('Tem certeza que deseja parar o download?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/stop-download', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    addLog('🛑 Download interrompido', 'warning');
+                } else {
+                    addLog('❌ Erro ao parar: ' + data.error, 'error');
+                }
+            } catch (error) {
+                addLog('❌ Erro: ' + error.message, 'error');
             }
         }
 
