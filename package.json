@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "combine": "node src/combineTranscripts.js"
+    "combine": "node src/combineTranscripts.js",
+    "web": "python app.py"
   },
   "keywords": [
     "udemy",
