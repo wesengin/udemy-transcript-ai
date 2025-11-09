@@ -3,6 +3,7 @@ import json
 import threading
 import subprocess
 import time
+import re
 from datetime import datetime
 from pathlib import Path
 from flask import Flask, render_template, request, jsonify, send_file
@@ -36,6 +37,42 @@ SUMMARIES_DIR.mkdir(exist_ok=True)
 current_process = None
 verification_code_event = threading.Event()
 verification_code = None
+
+def extract_lecture_number(filename):
+    """Extract lecture number from filename like '1.1' or '2.5'"""
+    match = re.match(r'^(\d+\.\d+)', filename)
+    return match.group(1) if match else None
+
+def extract_section_info(first_file, last_file):
+    """Extract clean section info from filenames"""
+    first_num = extract_lecture_number(first_file)
+    last_num = extract_lecture_number(last_file)
+    
+    if first_num and last_num:
+        # Get section number (before the dot)
+        first_section = first_num.split('.')[0]
+        last_section = last_num.split('.')[0]
+        
+        if first_section == last_section:
+            return f"Section_{first_section}_Lectures_{first_num}_to_{last_num}"
+        else:
+            return f"Sections_{first_section}_to_{last_section}"
+    
+    return "Combined_Lectures"
+
+def clean_filename_for_summary(combined_filename):
+    """Create a clean summary filename from combined filename"""
+    # Remove .txt extension
+    name = combined_filename.replace('.txt', '')
+    
+    # Try to extract section info
+    match = re.search(r'(Section_\d+_Lectures_[\d\.]+_to_[\d\.]+|Sections_\d+_to_\d+|Combined_Lectures)', name)
+    if match:
+        return f"Summary_{match.group(1)}"
+    
+    # Fallback
+    return "Summary"
+
 
 class DownloadManager:
     def __init__(self):
@@ -288,10 +325,12 @@ def combine_transcripts():
                 combined_content.append(content)
                 combined_content.append('\n\n' + '='*80 + '\n\n')
         
-        # Create filename from first and last file
+        # Create clean filename
         first_name = Path(selected_files[0]).stem
         last_name = Path(selected_files[-1]).stem
-        combined_filename = f"Combined_{first_name}_to_{last_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+        section_info = extract_section_info(first_name, last_name)
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        combined_filename = f"{section_info}_{timestamp}.txt"
         
         # Save combined file
         combined_path = COMBINED_DIR / combined_filename
@@ -376,9 +415,11 @@ Agora crie o resumo detalhado e bem estruturado:"""
         
         summary = response.choices[0].message.content
         
-        # Create summary filename
+        # Create clean summary filename
         original_filename = Path(file_path).stem
-        summary_filename = f"Summary_{original_filename}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md"
+        clean_name = clean_filename_for_summary(original_filename)
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        summary_filename = f"{clean_name}_{timestamp}.md"
         summary_path = SUMMARIES_DIR / summary_filename
         
         # Save summary
@@ -389,10 +430,8 @@ Agora crie o resumo detalhado e bem estruturado:"""
             f.write("---\n\n")
             f.write(summary)
         
-        socketio.emit('summarization_complete', {
-            'success': True,
-            'filename': summary_filename
-        })
+        # Don't emit summarization_complete here, only return JSON
+        # The frontend will handle the notification
         
         return jsonify({
             'success': True,
@@ -402,10 +441,6 @@ Agora crie o resumo detalhado e bem estruturado:"""
         })
         
     except Exception as e:
-        socketio.emit('summarization_complete', {
-            'success': False,
-            'error': str(e)
-        })
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/view-file', methods=['POST'])
@@ -441,6 +476,27 @@ def download_file(filename):
         return jsonify({'error': 'File not found'}), 404
     
     return send_file(file_path, as_attachment=True)
+
+@app.route('/api/open-in-explorer', methods=['POST'])
+def open_in_explorer():
+    """Open file location in Windows Explorer"""
+    data = request.json
+    file_path = data.get('file_path')
+    
+    if not file_path:
+        return jsonify({'error': 'File path is required'}), 400
+    
+    try:
+        file_path = Path(file_path)
+        if not file_path.exists():
+            return jsonify({'error': 'File not found'}), 404
+        
+        # Open Windows Explorer and select the file
+        subprocess.run(['explorer', '/select,', str(file_path)])
+        
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @socketio.on('connect')
 def handle_connect():
