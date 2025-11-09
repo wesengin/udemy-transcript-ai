@@ -599,7 +599,20 @@
 
                 <div class="grid-2">
                     <div class="form-group">
-                        <label>Número de Abas</label>
+                        <label>
+                            Número de Abas
+                            <div class="tooltip-container" style="display: inline-block;">
+                                <i class="fas fa-info-circle tooltip-icon"></i>
+                                <span class="tooltip-text">
+                                    <strong>Download Paralelo</strong><br>
+                                    Controla quantas aulas são baixadas simultaneamente.<br><br>
+                                    <strong>• 1-3 abas:</strong> Mais lento, mas mais seguro<br>
+                                    <strong>• 5 abas:</strong> Balanceado (recomendado)<br>
+                                    <strong>• 8-10 abas:</strong> Mais rápido, pode sobrecarregar<br><br>
+                                    <em>Mais abas = download mais rápido, mas pode causar erros se o servidor da Udemy limitar requisições.</em>
+                                </span>
+                            </div>
+                        </label>
                         <input type="number" id="tab-count" value="5" min="1" max="10">
                     </div>
 

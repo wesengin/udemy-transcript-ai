@@ -95,36 +95,71 @@ class DownloadManager:
                 universal_newlines=True
             )
             
-            # Read output line by line
-            for line in self.process.stdout:
-                line = line.strip()
-                if line:
-                    socketio.emit('download_log', {'message': line})
-                    
-                    # Check if waiting for verification code
-                    if 'verification code' in line.lower():
-                        self.waiting_for_code = True
-                        socketio.emit('request_verification_code')
-                        
-                        # Wait for verification code
-                        verification_code_event.wait()
-                        verification_code_event.clear()
-                        
-                        # Send code to process
-                        if verification_code:
-                            self.process.stdin.write(verification_code + '\n')
-                            self.process.stdin.flush()
-                        
-                        self.waiting_for_code = False
+            # Thread to read stdout
+            def read_stdout():
+                try:
+                    for line in iter(self.process.stdout.readline, ''):
+                        if not line:
+                            break
+                        line = line.strip()
+                        if line:
+                            socketio.emit('download_log', {'message': line})
+                            
+                            # Check if waiting for verification code
+                            if 'verification code' in line.lower() and 'enter' in line.lower():
+                                self.waiting_for_code = True
+                                socketio.emit('request_verification_code')
+                                
+                                # Wait for verification code
+                                verification_code_event.wait()
+                                verification_code_event.clear()
+                                
+                                # Send code to process
+                                if verification_code:
+                                    self.process.stdin.write(verification_code + '\n')
+                                    self.process.stdin.flush()
+                                
+                                self.waiting_for_code = False
+                except Exception as e:
+                    socketio.emit('download_log', {'message': f'Error reading stdout: {str(e)}'})
+                finally:
+                    if self.process and self.process.stdout:
+                        self.process.stdout.close()
+            
+            # Thread to read stderr
+            def read_stderr():
+                try:
+                    for line in iter(self.process.stderr.readline, ''):
+                        if not line:
+                            break
+                        line = line.strip()
+                        if line:
+                            socketio.emit('download_log', {'message': f'⚠️ {line}'})
+                except Exception as e:
+                    socketio.emit('download_log', {'message': f'Error reading stderr: {str(e)}'})
+                finally:
+                    if self.process and self.process.stderr:
+                        self.process.stderr.close()
+            
+            # Start threads
+            stdout_thread = threading.Thread(target=read_stdout)
+            stderr_thread = threading.Thread(target=read_stderr)
+            stdout_thread.daemon = True
+            stderr_thread.daemon = True
+            stdout_thread.start()
+            stderr_thread.start()
             
             # Wait for process to complete
             self.process.wait()
             
+            # Wait for threads to finish reading
+            stdout_thread.join(timeout=5)
+            stderr_thread.join(timeout=5)
+            
             if self.process.returncode == 0:
                 socketio.emit('download_complete', {'success': True})
             else:
-                error = self.process.stderr.read()
-                socketio.emit('download_complete', {'success': False, 'error': error})
+                socketio.emit('download_complete', {'success': False, 'error': f'Process exited with code {self.process.returncode}'})
                 
         except Exception as e:
             socketio.emit('download_complete', {'success': False, 'error': str(e)})
