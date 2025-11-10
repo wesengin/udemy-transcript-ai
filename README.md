@@ -1,5 +1,9 @@
 # Udemy Transcript Downloader & AI Summarizer
 
+**Português** | [English](README_en.md)
+
+---
+
 Ferramenta completa para baixar transcrições de cursos da Udemy, combinar arquivos e gerar resumos usando IA.
 
 Baseado no projeto [udemy-transcript-downloader](https://github.com/TOA-Anakin/udemy-transcript-downloader) de TOA-Anakin, com melhorias e uma interface web moderna.
