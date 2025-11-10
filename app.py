@@ -352,6 +352,7 @@ def summarize():
     data = request.json
     file_path = data.get('file_path')
     model = data.get('model', 'gpt-4o-mini')
+    language = data.get('language', 'pt')  # Get language from request
     
     if not file_path:
         return jsonify({'error': 'File path is required'}), 400
@@ -373,10 +374,35 @@ def summarize():
         
         client = OpenAI(api_key=api_key)
         
-        # Create prompt for summarization
-        prompt = f"""Você é um assistente especializado em criar resumos detalhados e bem estruturados de aulas.
+        # Create prompt based on language
+        if language == 'en':
+            system_message = "You are an assistant specialized in creating detailed and well-structured summaries of educational content."
+            prompt = f"""Analyze the following lesson transcripts and create a complete and well-organized summary.
 
-Analise as seguintes transcrições de aula e crie um resumo completo e bem organizado.
+The summary should include:
+
+1. **General Overview**: An overview of what was covered in the lessons
+2. **Tools and Technologies**: List of the main tools and techniques used
+3. **Key Points**: The main concepts and ideas presented by the instructor
+4. **Examples and Projects**: Description of practical examples and projects presented
+5. **Fundamental Knowledge**: The most important concepts to remember
+
+IMPORTANT:
+- Maintain a good level of detail - don't over-summarize
+- Preserve important technical information
+- Use Markdown formatting for readability
+- Use emojis to highlight important sections
+- Organize in clear topics and subtopics
+- Include specific examples mentioned in the lessons
+
+Transcripts:
+
+{transcript_content}
+
+Now create the detailed and well-structured summary:"""
+        else:
+            system_message = "Você é um assistente especializado em criar resumos detalhados e bem estruturados de conteúdo educacional."
+            prompt = f"""Analise as seguintes transcrições de aula e crie um resumo completo e bem organizado.
 
 O resumo deve incluir:
 
@@ -407,7 +433,7 @@ Agora crie o resumo detalhado e bem estruturado:"""
         api_params = {
             'model': model,
             'messages': [
-                {"role": "system", "content": "Você é um assistente especializado em criar resumos detalhados e bem estruturados de conteúdo educacional."},
+                {"role": "system", "content": system_message},
                 {"role": "user", "content": prompt}
             ]
         }

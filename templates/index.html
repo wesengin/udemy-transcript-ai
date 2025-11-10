@@ -837,7 +837,7 @@
 
                 <div id="summarization-status" style="display: none; margin-top: 1rem;">
                     <div class="spinner"></div>
-                    <p style="text-align: center; color: var(--text-secondary); margin-top: 1rem;">
+                    <p style="text-align: center; color: var(--text-secondary); margin-top: 1rem;" data-i18n="generating-summary">
                         Gerando resumo... Isso pode levar alguns minutos.
                     </p>
                 </div>
@@ -962,7 +962,10 @@
             const downloadSrt = document.getElementById('download-srt').checked;
 
             if (!courseUrl) {
-                alert('Por favor, insira a URL do curso');
+                const msg = currentLanguage === 'pt'
+                    ? 'Por favor, insira a URL do curso'
+                    : 'Please enter the course URL';
+                alert(msg);
                 return;
             }
 
@@ -1037,7 +1040,10 @@
             const code = document.getElementById('verification-code').value.trim();
 
             if (!code || code.length !== 6) {
-                alert('Por favor, insira um código de 6 dígitos');
+                const msg = currentLanguage === 'pt'
+                    ? 'Por favor, insira um código de 6 dígitos'
+                    : 'Please enter a 6-digit code';
+                alert(msg);
                 return;
             }
 
@@ -1053,10 +1059,16 @@
                 if (response.ok) {
                     document.getElementById('verification-modal').classList.remove('active');
                     document.getElementById('verification-code').value = '';
-                    addLog('✅ Código de verificação enviado', 'success');
+                    const successLog = currentLanguage === 'pt'
+                        ? '✅ Código de verificação enviado'
+                        : '✅ Verification code submitted';
+                    addLog(successLog, 'success');
                 }
             } catch (error) {
-                alert('Erro ao enviar código: ' + error.message);
+                const errorMsg = currentLanguage === 'pt'
+                    ? 'Erro ao enviar código: ' + error.message
+                    : 'Error submitting code: ' + error.message;
+                alert(errorMsg);
             }
         }
 
@@ -1070,13 +1082,22 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    alert('✅ Arquivos combinados com sucesso: ' + data.filename);
+                    const successMsg = currentLanguage === 'pt'
+                        ? '✅ Arquivos combinados com sucesso: ' + data.filename
+                        : '✅ Files combined successfully: ' + data.filename;
+                    alert(successMsg);
                     loadCombinedFiles();
                 } else {
-                    alert('❌ Erro: ' + data.error);
+                    const errorMsg = currentLanguage === 'pt'
+                        ? '❌ Erro: ' + data.error
+                        : '❌ Error: ' + data.error;
+                    alert(errorMsg);
                 }
             } catch (error) {
-                alert('❌ Erro: ' + error.message);
+                const errorMsg = currentLanguage === 'pt'
+                    ? '❌ Erro: ' + error.message
+                    : '❌ Error: ' + error.message;
+                alert(errorMsg);
             }
         }
 
@@ -1206,7 +1227,7 @@
             const model = document.getElementById('ai-model').value;
 
             if (!filePath) {
-                alert('Por favor, selecione um arquivo para resumir');
+                alert(currentLanguage === 'pt' ? 'Por favor, selecione um arquivo para resumir' : 'Please select a file to summarize');
                 return;
             }
 
@@ -1221,7 +1242,8 @@
                     },
                     body: JSON.stringify({
                         file_path: filePath,
-                        model: model
+                        model: model,
+                        language: currentLanguage
                     })
                 });
 
@@ -1231,15 +1253,24 @@
                 document.getElementById('summarize-btn').disabled = false;
 
                 if (response.ok) {
-                    alert('✅ Resumo gerado com sucesso: ' + data.filename);
+                    const successMsg = currentLanguage === 'pt' 
+                        ? '✅ Resumo gerado com sucesso: ' + data.filename
+                        : '✅ Summary generated successfully: ' + data.filename;
+                    alert(successMsg);
                     loadSummaries();
                 } else {
-                    alert('❌ Erro: ' + data.error);
+                    const errorMsg = currentLanguage === 'pt'
+                        ? '❌ Erro: ' + data.error
+                        : '❌ Error: ' + data.error;
+                    alert(errorMsg);
                 }
             } catch (error) {
                 document.getElementById('summarization-status').style.display = 'none';
                 document.getElementById('summarize-btn').disabled = false;
-                alert('❌ Erro: ' + error.message);
+                const errorMsg = currentLanguage === 'pt'
+                    ? '❌ Erro: ' + error.message
+                    : '❌ Error: ' + error.message;
+                alert(errorMsg);
             }
         }
 
@@ -1275,10 +1306,16 @@
                     
                     document.getElementById('preview-modal').classList.add('active');
                 } else {
-                    alert('Erro ao visualizar arquivo: ' + data.error);
+                    const errorMsg = currentLanguage === 'pt'
+                        ? 'Erro ao visualizar arquivo: ' + data.error
+                        : 'Error viewing file: ' + data.error;
+                    alert(errorMsg);
                 }
             } catch (error) {
-                alert('Erro ao visualizar arquivo: ' + error.message);
+                const errorMsg = currentLanguage === 'pt'
+                    ? 'Erro ao visualizar arquivo: ' + error.message
+                    : 'Error viewing file: ' + error.message;
+                alert(errorMsg);
             }
         }
 
@@ -1306,10 +1343,16 @@
                 const data = await response.json();
 
                 if (!response.ok) {
-                    alert('Erro ao abrir pasta: ' + data.error);
+                    const errorMsg = currentLanguage === 'pt'
+                        ? 'Erro ao abrir pasta: ' + data.error
+                        : 'Error opening folder: ' + data.error;
+                    alert(errorMsg);
                 }
             } catch (error) {
-                alert('Erro ao abrir pasta: ' + error.message);
+                const errorMsg = currentLanguage === 'pt'
+                    ? 'Erro ao abrir pasta: ' + error.message
+                    : 'Error opening folder: ' + error.message;
+                alert(errorMsg);
             }
         }
 
@@ -1404,6 +1447,7 @@
                 'select-file-label': 'Selecione o arquivo combinado',
                 'ai-model-label': 'Modelo de IA',
                 'generate-summary-btn': 'Gerar Resumo',
+                'generating-summary': 'Gerando resumo... Isso pode levar alguns minutos.',
                 'summaries-title': 'Resumos Gerados',
                 'no-summaries': 'Nenhum resumo gerado ainda',
                 'verification-title': 'Código de Verificação',
@@ -1441,6 +1485,7 @@
                 'select-file-label': 'Select combined file',
                 'ai-model-label': 'AI Model',
                 'generate-summary-btn': 'Generate Summary',
+                'generating-summary': 'Generating summary... This may take a few minutes.',
                 'summaries-title': 'Generated Summaries',
                 'no-summaries': 'No summaries generated yet',
                 'verification-title': 'Verification Code',
