@@ -96,9 +96,9 @@ Os arquivos combinados vão para `combined_transcripts/`
 
 1. Seleciona um arquivo combinado
 2. Escolhe o modelo:
-   - **GPT-4o Mini** - Mais barato (~$0.15 por 1M tokens)
-   - **GPT-4o** - Melhor qualidade (~$2.50 por 1M tokens)
-   - **O1 Mini** - Raciocínio avançado (~$3.00 por 1M tokens)
+   - **GPT-4o Mini** - Rápido e econômico (~$0.15 por 1M tokens input)
+   - **GPT-5 Nano** - Mais rápido e barato (~$0.05 por 1M tokens input)
+   - **GPT-5 Mini** - Balanceado (~$0.25 por 1M tokens input)
 3. Clica em "Gerar Resumo"
 4. Espera uns minutos
 5. Pronto, resumo estruturado com:

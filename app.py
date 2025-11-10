@@ -357,7 +357,7 @@ def summarize():
         return jsonify({'error': 'File path is required'}), 400
     
     # Validate model
-    valid_models = ['gpt-4o-mini', 'gpt-4o', 'o1-mini']
+    valid_models = ['gpt-4o-mini', 'gpt-5-nano', 'gpt-5-mini']
     if model not in valid_models:
         return jsonify({'error': f'Invalid model. Must be one of: {valid_models}'}), 400
     
@@ -403,15 +403,22 @@ Agora crie o resumo detalhado e bem estruturado:"""
         # Generate summary
         socketio.emit('summarization_progress', {'status': 'Gerando resumo com IA...'})
         
-        response = client.chat.completions.create(
-            model=model,
-            messages=[
+        # Build the API call parameters
+        api_params = {
+            'model': model,
+            'messages': [
                 {"role": "system", "content": "Você é um assistente especializado em criar resumos detalhados e bem estruturados de conteúdo educacional."},
                 {"role": "user", "content": prompt}
-            ],
-            temperature=0.7,
-            max_tokens=16000 if model == 'gpt-4o' else 8000
-        )
+            ]
+        }
+        
+        # GPT-5 models don't support custom temperature or max_tokens
+        # GPT-4 models support both
+        if not model.startswith('gpt-5'):
+            api_params['temperature'] = 0.7
+            api_params['max_tokens'] = 8000
+        
+        response = client.chat.completions.create(**api_params)
         
         summary = response.choices[0].message.content
         

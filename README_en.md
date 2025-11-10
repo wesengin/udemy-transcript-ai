@@ -96,9 +96,9 @@ Combined files go to `combined_transcripts/`
 
 1. Select a combined file
 2. Choose the model:
-   - **GPT-4o Mini** - Cheaper (~$0.15 per 1M tokens)
-   - **GPT-4o** - Better quality (~$2.50 per 1M tokens)
-   - **O1 Mini** - Advanced reasoning (~$3.00 per 1M tokens)
+   - **GPT-4o Mini** - Fast and economical (~$0.15 per 1M tokens input)
+   - **GPT-5 Nano** - Fastest and cheapest (~$0.05 per 1M tokens input)
+   - **GPT-5 Mini** - Balanced (~$0.25 per 1M tokens input)
 3. Click "Generate Summary"
 4. Wait a few minutes
 5. Done, structured summary with:
