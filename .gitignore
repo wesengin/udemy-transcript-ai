@@ -4,15 +4,10 @@ node_modules/
 # Environment variables
 .env
 
-# Output files and user data
-output/*
-!output/.gitkeep
-
-combined_transcripts/*
-!combined_transcripts/.gitkeep
-
-summaries/*
-!summaries/.gitkeep
+# Output directories (created automatically by app.py)
+output/
+combined_transcripts/
+summaries/
 
 # Logs
 logs

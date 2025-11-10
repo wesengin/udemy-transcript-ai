@@ -28,7 +28,7 @@ OUTPUT_DIR = BASE_DIR / 'output'
 COMBINED_DIR = BASE_DIR / 'combined_transcripts'
 SUMMARIES_DIR = BASE_DIR / 'summaries'
 
-# Create directories if they don't exist
+# Create directories if they don't exist (auto-created on startup)
 OUTPUT_DIR.mkdir(exist_ok=True)
 COMBINED_DIR.mkdir(exist_ok=True)
 SUMMARIES_DIR.mkdir(exist_ok=True)
