@@ -1,90 +1,177 @@
-# Udemy Transcript Downloader
+# Udemy Transcript Downloader & AI Summarizer
 
-A NodeJS-based tool for downloading transcripts from Udemy courses. This script uses Puppeteer to navigate through Udemy's UI and extract transcripts for each lecture in a course.
+Ferramenta completa para baixar transcrições de cursos da Udemy, combinar arquivos e gerar resumos usando IA.
 
-## Features
+Baseado no projeto [udemy-transcript-downloader](https://github.com/TOA-Anakin/udemy-transcript-downloader) de TOA-Anakin, com melhorias e uma interface web moderna.
 
-- Downloads transcripts from any Udemy course you have access to
-- Creates individual transcript files for each lecture
-- Generates a combined transcript file with all lectures
-- Optionally downloads `.srt` files with timestamps for each lecture
-- Scrapes and saves course content structure
-- Supports email-based authentication with verification code
-- Handles Cloudflare security challenges
-- Runs in headless mode for better performance
+## O que faz
 
-## Prerequisites
+- **Baixa transcrições** de qualquer curso da Udemy que você tenha acesso
+- **Combina múltiplas aulas** em um único arquivo para facilitar a revisão
+- **Gera resumos inteligentes** usando GPT da OpenAI
+- **Interface web moderna** - nada de terminal complicado, tudo visual e intuitivo
 
-- Node.js (v14 or newer)
-- NPM
-- A Udemy account with access to the course you want to download transcripts from
+## Instalação
 
-## Installation
+### Requisitos
 
-1. Clone this repository:
-   ```
-   git clone https://github.com/TOA-Anakin/udemy-transcript-downloader.git
-   cd udemy-transcript-downloader
-   ```
+- Node.js (versão 14+)
+- Python 3.8+
+- Conta na Udemy
+- Chave de API da OpenAI (só se for usar resumos)
 
-2. Install dependencies:
-   ```
-   npm install
-   ```
+### Instalação Rápida
 
-3. Create a `.env` file in the root directory with your Udemy email:
-   ```
-   UDEMY_EMAIL=your-email@example.com
-   ```
+Execute no PowerShell ou CMD:
 
-## Usage
-
-Run the script with the URL of the Udemy course as an argument:
-
-```
-npm start "https://www.udemy.com/course/your-course-url/"
+```bash
+setup.bat
 ```
 
-Or use the direct Node.js command:
+Isso instala tudo automaticamente. Se preferir fazer manualmente:
+
+```bash
+npm install
+pip install -r requirements.txt
+```
+
+### Configuração
+
+Crie um arquivo `.env` na raiz do projeto:
+
+```env
+UDEMY_EMAIL=seu-email@udemy.com
+OPENAI_API_KEY=sk-sua-chave-aqui
+```
+
+Para pegar sua chave da OpenAI: https://platform.openai.com/api-keys
+
+## Como usar
+
+### Iniciar a aplicação
+
+```bash
+start_web.bat
+```
+
+Ou:
+
+```bash
+npm run web
+```
+
+Abre automaticamente em **http://localhost:5000**
+
+### Interface Web
+
+A aplicação tem 3 abas:
+
+#### 📥 Download
+
+1. Cole a URL do curso da Udemy
+2. Ajuste quantas abas quer usar em paralelo (5 é um bom número)
+3. Marque se quer baixar arquivos .srt também
+4. Clica em "Iniciar Download"
+5. Quando pedir, digite o código de verificação do seu email
+6. Acompanha os logs enquanto baixa
+
+Os arquivos vão para a pasta `output/`
+
+#### 🔗 Combinar
+
+1. Clica em "Selecionar Arquivos"
+2. Escolhe as aulas que quer juntar (use Ctrl pra selecionar várias)
+3. Pronto, arquivo combinado criado
+
+Dica: combina aulas da mesma seção/módulo pra ficar mais coerente
+
+Os arquivos combinados vão para `combined_transcripts/`
+
+#### 🤖 Resumir com IA
+
+1. Seleciona um arquivo combinado
+2. Escolhe o modelo:
+   - **GPT-4o Mini** - Mais barato (~$0.15 por 1M tokens)
+   - **GPT-4o** - Melhor qualidade (~$2.50 por 1M tokens)
+   - **O1 Mini** - Raciocínio avançado (~$3.00 por 1M tokens)
+3. Clica em "Gerar Resumo"
+4. Espera uns minutos
+5. Pronto, resumo estruturado com:
+   - Resumo geral
+   - Ferramentas e tecnologias
+   - Pontos principais
+   - Exemplos práticos
+   - Conhecimentos fundamentais
+
+Os resumos vão para `summaries/`
+
+## Estrutura de pastas
 
 ```
-node src/index.js "https://www.udemy.com/course/your-course-url/"
+udemy_resume/
+├── output/                    # Transcrições baixadas
+├── combined_transcripts/      # Arquivos combinados
+├── summaries/                 # Resumos gerados
+├── src/
+│   ├── index.js              # Script original (terminal)
+│   ├── index_api.js          # Versão adaptada (API)
+│   └── combineTranscripts.js # Combinar arquivos
+├── templates/
+│   └── index.html            # Interface web
+├── app.py                    # Servidor Flask
+├── .env                      # Suas credenciais
+└── package.json
 ```
 
-The script will:
+## Uso via terminal (modo antigo)
 
-1. Ask if you want to download `.srt` files (with timestamps) for each lecture
-2. Ask how many tabs to use for downloading transcripts (default is 5)
-   - A higher number can speed things up, but requires a good PC (enough CPU and RAM)
-3. Open a headless browser and navigate to Udemy login
-4. Fill in your email from the .env file
-5. Ask you to enter the 6-digit verification code from your email
-6. Navigate to the course page
-7. Scrape course content structure
-8. Enter the course player
-9. Go through each lecture and download available transcripts
-10. Save individual transcript files in the `output` directory
+Se preferir terminal:
 
-## Output Files
+```bash
+# Baixar transcrições
+npm start "https://www.udemy.com/course/nome-do-curso/"
 
-All output files are saved to the `output` directory:
+# Combinar arquivos
+npm run combine
+```
 
-- `CONTENTS.txt` - Course structure with sections and lectures
-- `[Lecture Name].txt` - Individual transcript files for each lecture
-- `[Lecture Name].srt` - Individual transcript files with timestamps in SubRip format (optional)
+## Problemas comuns
 
-## Troubleshooting
+**"Module not found: flask"**
+```bash
+pip install -r requirements.txt
+```
 
-- **Verification Code Issues**: Make sure to enter the verification code quickly after receiving it in your email
-- **Browser Crashing**: If you experience issues with headless mode, you can modify the script to use `headless: false` for debugging
-- **Missing Transcripts**: Not all lectures may have transcripts. The script will create empty files for lectures without transcripts.
-- **SRT Errors**: If `.srt` generation fails for a lecture, try increasing timeouts or re-running the script with fewer browser tabs open.
-- **Slow Transcript Downloads**: The script can download transcripts in parallel using multiple browser tabs. If your PC is slow or has limited memory, stick to a lower number of tabs (e.g. 1–3). If you have a powerful machine, you can safely use 5 or more tabs for faster processing.
+**"OPENAI_API_KEY not found"**
+- Verifica se o `.env` existe e tem a chave certa
+- Reinicia a aplicação
 
-## License
+**Porta 5000 já em uso**
+- Muda a porta no final do `app.py` pra 5001 ou outra
+
+**Algumas aulas não baixaram**
+- Normal, nem toda aula tem transcrição disponível
+
+**Download travou**
+- Diminui o número de abas paralelas pra 2 ou 3
+
+## Créditos
+
+Código base de download de transcrições: [TOA-Anakin/udemy-transcript-downloader](https://github.com/TOA-Anakin/udemy-transcript-downloader)
+
+Adicionado neste fork:
+- Correções e melhorias no script de download
+- Sistema de combinação de arquivos
+- Interface web completa
+- Integração com OpenAI para resumos
+- Logs em tempo real via WebSocket
+
+## Notas
+
+- Use com responsabilidade, apenas para cursos que você comprou
+- Resumos com IA consomem créditos da OpenAI
+- Alguns cursos podem ter proteção extra - nem tudo funciona 100%
+
+## Licença
 
 MIT
-
-## Disclaimer
-
-This tool is for personal use only. Please respect Udemy's terms of service.
