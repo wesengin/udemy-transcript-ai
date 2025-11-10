@@ -4,9 +4,15 @@ node_modules/
 # Environment variables
 .env
 
-# Output files
+# Output files and user data
 output/*
 !output/.gitkeep
+
+combined_transcripts/*
+!combined_transcripts/.gitkeep
+
+summaries/*
+!summaries/.gitkeep
 
 # Logs
 logs
