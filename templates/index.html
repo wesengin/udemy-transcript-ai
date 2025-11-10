@@ -685,19 +685,25 @@
 <body>
     <div class="container">
         <header>
-            <h1>🎓 Udemy Transcript Downloader</h1>
-            <p class="subtitle">Baixe transcrições, combine arquivos e gere resumos com IA</p>
+            <div style="position: absolute; top: 2rem; right: 2rem;">
+                <select id="language-selector" onchange="changeLanguage(this.value)" style="padding: 0.5rem 1rem; border: 2px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-primary); font-size: 0.9rem; cursor: pointer; font-family: 'Inter', sans-serif;">
+                    <option value="pt">🇧🇷 Português</option>
+                    <option value="en">🇺🇸 English</option>
+                </select>
+            </div>
+            <h1 data-i18n="app-title">🎓 Udemy Transcript Downloader</h1>
+            <p class="subtitle" data-i18n="app-subtitle">Baixe transcrições, combine arquivos e gere resumos com IA</p>
         </header>
 
         <div class="tabs">
             <button class="tab active" onclick="switchTab('download')">
-                <i class="fas fa-download"></i> Download
+                <i class="fas fa-download"></i> <span data-i18n="tab-download">Download</span>
             </button>
             <button class="tab" onclick="switchTab('combine')">
-                <i class="fas fa-layer-group"></i> Combinar
+                <i class="fas fa-layer-group"></i> <span data-i18n="tab-combine">Combinar</span>
             </button>
             <button class="tab" onclick="switchTab('summarize')">
-                <i class="fas fa-magic"></i> Resumir com IA
+                <i class="fas fa-magic"></i> <span data-i18n="tab-summarize">Resumir com IA</span>
             </button>
         </div>
 
@@ -706,21 +712,21 @@
             <div class="card">
                 <div class="card-header">
                     <i class="fas fa-graduation-cap"></i>
-                    <h2>Baixar Transcrições</h2>
+                    <h2 data-i18n="download-title">Baixar Transcrições</h2>
                 </div>
 
                 <div class="form-group">
-                    <label>URL do Curso na Udemy</label>
-                    <input type="text" id="course-url" placeholder="https://www.udemy.com/course/nome-do-curso/">
+                    <label data-i18n="course-url-label">URL do Curso na Udemy</label>
+                    <input type="text" id="course-url" data-i18n="course-url-placeholder" placeholder="https://www.udemy.com/course/nome-do-curso/">
                 </div>
 
                 <div class="grid-2">
                     <div class="form-group">
                         <label>
-                            Número de Abas
+                            <span data-i18n="tab-count-label">Número de Abas</span>
                             <div class="tooltip-container" style="display: inline-block;">
                                 <i class="fas fa-info-circle tooltip-icon"></i>
-                                <span class="tooltip-text">
+                                <span class="tooltip-text" data-i18n-html="tooltip-tab-count">
                                     <strong>Download Paralelo</strong><br>
                                     Controla quantas aulas são baixadas simultaneamente.<br><br>
                                     <strong>• 1-3 abas:</strong> Mais lento, mas mais seguro<br>
@@ -736,10 +742,10 @@
                     <div class="form-group">
                         <div class="checkbox-group">
                             <input type="checkbox" id="download-srt">
-                            <label for="download-srt" style="margin: 0;">Baixar arquivos .srt também</label>
+                            <label for="download-srt" style="margin: 0;" data-i18n="download-srt-label">Baixar arquivos .srt também</label>
                             <div class="tooltip-container">
                                 <i class="fas fa-info-circle tooltip-icon"></i>
-                                <span class="tooltip-text">
+                                <span class="tooltip-text" data-i18n-html="tooltip-srt-files">
                                     <strong>Arquivos .srt (SubRip Subtitle)</strong><br>
                                     São arquivos de legenda com timestamps precisos. Útil para:<br>
                                     • Criar legendas personalizadas<br>
@@ -755,7 +761,7 @@
 
                 <div style="display: flex; gap: 1rem;">
                     <button class="btn btn-primary" onclick="startDownload()" id="start-download-btn">
-                        <i class="fas fa-play"></i> Iniciar Download
+                        <i class="fas fa-play"></i> <span data-i18n="start-download-btn">Iniciar Download</span>
                     </button>
                     <button class="btn btn-danger" onclick="stopDownload()" id="stop-download-btn" style="display: none;">
                         <i class="fas fa-stop"></i> Parar Download
@@ -766,7 +772,7 @@
             <div class="card" id="log-card" style="display: none;">
                 <div class="card-header">
                     <i class="fas fa-terminal"></i>
-                    <h2>Logs do Processo</h2>
+                    <h2 data-i18n="logs-title">Logs do Processo</h2>
                 </div>
                 <div id="log-container" class="log-container"></div>
             </div>
@@ -777,22 +783,22 @@
             <div class="card">
                 <div class="card-header">
                     <i class="fas fa-layer-group"></i>
-                    <h2>Combinar Transcrições</h2>
+                    <h2 data-i18n="combine-title">Combinar Transcrições</h2>
                 </div>
 
-                <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">
+                <p style="margin-bottom: 1.5rem; color: var(--text-secondary);" data-i18n="combine-description">
                     Selecione múltiplos arquivos de transcrição para combiná-los em um único arquivo.
                 </p>
 
                 <button class="btn btn-secondary" onclick="combineTranscripts()">
-                    <i class="fas fa-folder-open"></i> Selecionar Arquivos para Combinar
+                    <i class="fas fa-folder-open"></i> <span data-i18n="select-files-btn">Selecionar Arquivos para Combinar</span>
                 </button>
             </div>
 
             <div class="card">
                 <div class="card-header">
                     <i class="fas fa-files-o"></i>
-                    <h2>Arquivos Combinados</h2>
+                    <h2 data-i18n="combined-files-title">Arquivos Combinados</h2>
                 </div>
 
                 <div id="combined-files-list">
@@ -806,18 +812,18 @@
             <div class="card">
                 <div class="card-header">
                     <i class="fas fa-robot"></i>
-                    <h2>Gerar Resumo com IA</h2>
+                    <h2 data-i18n="summarize-title">Gerar Resumo com IA</h2>
                 </div>
 
                 <div class="form-group">
-                    <label>Selecione o arquivo combinado</label>
+                    <label data-i18n="select-file-label">Selecione o arquivo combinado</label>
                     <select id="file-to-summarize">
                         <option value="">Carregando...</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label>Modelo de IA</label>
+                    <label data-i18n="ai-model-label">Modelo de IA</label>
                     <select id="ai-model">
                         <option value="gpt-4o-mini">GPT-4o Mini (Rápido e Econômico)</option>
                         <option value="gpt-4o">GPT-4o (Mais Poderoso)</option>
@@ -826,7 +832,7 @@
                 </div>
 
                 <button class="btn btn-success" onclick="generateSummary()" id="summarize-btn">
-                    <i class="fas fa-magic"></i> Gerar Resumo
+                    <i class="fas fa-magic"></i> <span data-i18n="generate-summary-btn">Gerar Resumo</span>
                 </button>
 
                 <div id="summarization-status" style="display: none; margin-top: 1rem;">
@@ -840,7 +846,7 @@
             <div class="card">
                 <div class="card-header">
                     <i class="fas fa-file-alt"></i>
-                    <h2>Resumos Gerados</h2>
+                    <h2 data-i18n="summaries-title">Resumos Gerados</h2>
                 </div>
 
                 <div id="summaries-list">
@@ -854,16 +860,16 @@
     <div id="verification-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Código de Verificação</h3>
+                <h3 data-i18n="verification-title">Código de Verificação</h3>
             </div>
 
             <div class="form-group">
-                <label>Digite o código de 6 dígitos enviado para seu email</label>
-                <input type="text" id="verification-code" placeholder="000000" maxlength="6">
+                <label data-i18n="verification-text">Digite o código de 6 dígitos enviado para seu email</label>
+                <input type="text" id="verification-code" data-i18n="verification-placeholder" placeholder="000000" maxlength="6">
             </div>
 
             <button class="btn btn-primary" onclick="submitVerificationCode()" style="width: 100%;">
-                <i class="fas fa-check"></i> Confirmar
+                <i class="fas fa-check"></i> <span data-i18n="submit-code-btn">Confirmar</span>
             </button>
         </div>
     </div>
@@ -872,7 +878,7 @@
     <div id="preview-modal" class="modal">
         <div class="modal-content" style="max-width: 800px; max-height: 80vh; overflow-y: auto;">
             <div class="modal-header">
-                <h3 id="preview-title">Visualizar Arquivo</h3>
+                <h3 id="preview-title" data-i18n="preview-title">Visualizar Arquivo</h3>
                 <button class="close-modal" onclick="closePreviewModal()">
                     <i class="fas fa-times"></i>
                 </button>
@@ -1087,7 +1093,7 @@
                     container.innerHTML = `
                         <div class="empty-state">
                             <i class="fas fa-folder-open"></i>
-                            <p>Nenhum arquivo combinado ainda</p>
+                            <p>${t('no-combined-files')}</p>
                         </div>
                     `;
                     return;
@@ -1118,7 +1124,7 @@
                 container.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-exclamation-triangle"></i>
-                        <p>Erro ao carregar arquivos</p>
+                        <p>${t('error-loading-files')}</p>
                     </div>
                 `;
             }
@@ -1133,14 +1139,14 @@
                 const files = await response.json();
 
                 if (files.length === 0) {
-                    select.innerHTML = '<option value="">Nenhum arquivo combinado disponível</option>';
+                    select.innerHTML = `<option value="">${t('no-combined-files-available')}</option>`;
                     return;
                 }
 
-                select.innerHTML = '<option value="">Selecione um arquivo...</option>' +
+                select.innerHTML = `<option value="">${t('select-file-option')}</option>` +
                     files.map(file => `<option value="${file.path}">${file.name}</option>`).join('');
             } catch (error) {
-                select.innerHTML = '<option value="">Erro ao carregar arquivos</option>';
+                select.innerHTML = `<option value="">${t('error-loading-files')}</option>`;
             }
         }
 
@@ -1157,7 +1163,7 @@
                     container.innerHTML = `
                         <div class="empty-state">
                             <i class="fas fa-file-alt"></i>
-                            <p>Nenhum resumo gerado ainda</p>
+                            <p>${t('no-summaries')}</p>
                         </div>
                     `;
                     return;
@@ -1188,7 +1194,7 @@
                 container.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-exclamation-triangle"></i>
-                        <p>Erro ao carregar resumos</p>
+                        <p>${t('error-loading-summaries')}</p>
                     </div>
                 `;
             }
@@ -1363,7 +1369,133 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             console.log('Application initialized');
+            // Load saved language preference
+            const savedLang = localStorage.getItem('language') || 'pt';
+            currentLanguage = savedLang;
+            document.getElementById('language-selector').value = savedLang;
+            if (savedLang !== 'pt') {
+                changeLanguage(savedLang);
+            }
         });
+
+        // i18n (Internationalization) System
+        const translations = {
+            pt: {
+                'app-title': '🎓 Udemy Transcript Downloader',
+                'app-subtitle': 'Baixe transcrições, combine arquivos e gere resumos com IA',
+                'tab-download': 'Download',
+                'tab-combine': 'Combinar',
+                'tab-summarize': 'Resumir com IA',
+                'download-title': 'Baixar Transcrições',
+                'course-url-label': 'URL do Curso na Udemy',
+                'course-url-placeholder': 'https://www.udemy.com/course/nome-do-curso/',
+                'tab-count-label': 'Número de Abas',
+                'download-srt-label': 'Baixar arquivos .srt também',
+                'start-download-btn': 'Iniciar Download',
+                'logs-title': 'Logs do Processo',
+                'combine-title': 'Combinar Transcrições',
+                'combine-description': 'Selecione múltiplos arquivos de transcrição para combiná-los em um único arquivo.',
+                'select-files-btn': 'Selecionar Arquivos para Combinar',
+                'combined-files-title': 'Arquivos Combinados',
+                'no-combined-files': 'Nenhum arquivo combinado ainda',
+                'no-combined-files-available': 'Nenhum arquivo combinado disponível',
+                'select-file-option': 'Selecione um arquivo...',
+                'summarize-title': 'Gerar Resumo com IA',
+                'select-file-label': 'Selecione o arquivo combinado',
+                'ai-model-label': 'Modelo de IA',
+                'generate-summary-btn': 'Gerar Resumo',
+                'summaries-title': 'Resumos Gerados',
+                'no-summaries': 'Nenhum resumo gerado ainda',
+                'verification-title': 'Código de Verificação',
+                'verification-text': 'Digite o código de 6 dígitos enviado para seu email',
+                'verification-placeholder': '000000',
+                'submit-code-btn': 'Confirmar',
+                'preview-title': 'Visualizar Arquivo',
+                'close-btn': 'Fechar',
+                'error-loading-files': 'Erro ao carregar arquivos',
+                'error-loading-summaries': 'Erro ao carregar resumos',
+                'tooltip-tab-count': '<strong>Download Paralelo</strong><br>Controla quantas aulas são baixadas simultaneamente.<br><br><strong>• 1-3 abas:</strong> Mais lento, mas mais seguro<br><strong>• 5 abas:</strong> Balanceado (recomendado)<br><strong>• 8-10 abas:</strong> Mais rápido, pode sobrecarregar<br><br><em>Mais abas = download mais rápido, mas pode causar erros se o servidor da Udemy limitar requisições.</em>',
+                'tooltip-srt-files': '<strong>Arquivos .srt (SubRip Subtitle)</strong><br>São arquivos de legenda com timestamps precisos. Útil para:<br>• Criar legendas personalizadas<br>• Sincronizar com vídeos offline<br>• Análise de conteúdo por tempo<br>• Importar em editores de vídeo<br><br><em>Se desmarcado, apenas o texto puro será baixado.</em>'
+            },
+            en: {
+                'app-title': '🎓 Udemy Transcript Downloader',
+                'app-subtitle': 'Download transcripts, combine files and generate AI summaries',
+                'tab-download': 'Download',
+                'tab-combine': 'Combine',
+                'tab-summarize': 'AI Summary',
+                'download-title': 'Download Transcripts',
+                'course-url-label': 'Udemy Course URL',
+                'course-url-placeholder': 'https://www.udemy.com/course/course-name/',
+                'tab-count-label': 'Number of Tabs',
+                'download-srt-label': 'Download .srt files too',
+                'start-download-btn': 'Start Download',
+                'logs-title': 'Process Logs',
+                'combine-title': 'Combine Transcripts',
+                'combine-description': 'Select multiple transcript files to combine them into a single file.',
+                'select-files-btn': 'Select Files to Combine',
+                'combined-files-title': 'Combined Files',
+                'no-combined-files': 'No combined files yet',
+                'no-combined-files-available': 'No combined files available',
+                'select-file-option': 'Select a file...',
+                'summarize-title': 'Generate AI Summary',
+                'select-file-label': 'Select combined file',
+                'ai-model-label': 'AI Model',
+                'generate-summary-btn': 'Generate Summary',
+                'summaries-title': 'Generated Summaries',
+                'no-summaries': 'No summaries generated yet',
+                'verification-title': 'Verification Code',
+                'verification-text': 'Enter the 6-digit code sent to your email',
+                'verification-placeholder': '000000',
+                'submit-code-btn': 'Submit',
+                'preview-title': 'File Preview',
+                'close-btn': 'Close',
+                'error-loading-files': 'Error loading files',
+                'error-loading-summaries': 'Error loading summaries',
+                'tooltip-tab-count': '<strong>Parallel Download</strong><br>Controls how many lectures are downloaded simultaneously.<br><br><strong>• 1-3 tabs:</strong> Slower but safer<br><strong>• 5 tabs:</strong> Balanced (recommended)<br><strong>• 8-10 tabs:</strong> Faster, may overload<br><br><em>More tabs = faster download, but may cause errors if Udemy\'s server rate limits requests.</em>',
+                'tooltip-srt-files': '<strong>.srt Files (SubRip Subtitle)</strong><br>Subtitle files with precise timestamps. Useful for:<br>• Creating custom subtitles<br>• Syncing with offline videos<br>• Time-based content analysis<br>• Importing into video editors<br><br><em>If unchecked, only plain text will be downloaded.</em>'
+            }
+        };
+
+        let currentLanguage = 'pt';
+
+        function t(key) {
+            return translations[currentLanguage][key] || key;
+        }
+
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            // Save preference
+            localStorage.setItem('language', lang);
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    // Check if it's an input placeholder
+                    if (element.tagName === 'INPUT' && element.hasAttribute('placeholder')) {
+                        element.placeholder = translations[lang][key];
+                    } else {
+                        element.textContent = translations[lang][key];
+                    }
+                }
+            });
+
+            // Update elements with data-i18n-html attribute (for HTML content like tooltips)
+            document.querySelectorAll('[data-i18n-html]').forEach(element => {
+                const key = element.getAttribute('data-i18n-html');
+                if (translations[lang] && translations[lang][key]) {
+                    element.innerHTML = translations[lang][key];
+                }
+            });
+
+            // Update document language
+            document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+            
+            // Reload dynamic content
+            loadCombinedFiles();
+            loadCombinedFilesForSummary();
+            loadSummaries();
+        }
     </script>
 </body>
 </html>

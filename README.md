@@ -10,6 +10,7 @@ Baseado no projeto [udemy-transcript-downloader](https://github.com/TOA-Anakin/u
 - **Combina múltiplas aulas** em um único arquivo para facilitar a revisão
 - **Gera resumos inteligentes** usando GPT da OpenAI
 - **Interface web moderna** - nada de terminal complicado, tudo visual e intuitivo
+- **Suporte a múltiplos idiomas** - Português e Inglês
 
 ## Instalação
 
