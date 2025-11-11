@@ -4,6 +4,11 @@
 
 ---
 
+## 🎬 Demonstração do Projeto
+
+[![Assista à demonstração no YouTube](https://img.youtube.com/vi/JXyvHhr_l4g/maxresdefault.jpg)](https://www.youtube.com/watch?v=JXyvHhr_l4g)
+
+
 Ferramenta completa para baixar transcrições de cursos da Udemy, combinar arquivos e gerar resumos usando IA.
 
 Baseado no projeto [udemy-transcript-downloader](https://github.com/TOA-Anakin/udemy-transcript-downloader) de TOA-Anakin, com melhorias e uma interface web moderna.
