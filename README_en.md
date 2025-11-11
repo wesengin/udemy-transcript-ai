@@ -4,6 +4,11 @@
 
 ---
 
+## 🎬 Project Demonstration
+
+[![Watch the demonstration on YouTube](https://img.youtube.com/vi/JXyvHhr_l4g/maxresdefault.jpg)](https://www.youtube.com/watch?v=JXyvHhr_l4g)
+
+
 Complete tool to download Udemy course transcripts, combine files, and generate summaries using AI.
 
 Based on [udemy-transcript-downloader](https://github.com/TOA-Anakin/udemy-transcript-downloader) by TOA-Anakin, with improvements and a modern web interface.
